@@ -14,7 +14,7 @@ public:
 
     double total() const;
 
-    Bill operator+(const Bill& other) const;
-    bool operator==(const Bill& other) const;
+    Bill operator+(const Bill& other) const;       
+    bool operator==(const Bill& other) const;       
     friend ostream& operator<<(ostream& os, const Bill& b);
 };
