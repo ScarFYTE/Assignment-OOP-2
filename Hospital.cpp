@@ -35,6 +35,21 @@ Hospital::~Hospital() {
 }
 
 void Hospital::admit(const Patient& p) {
+
+    string Wardname = p.getWardName(); // Ensure ward name is set before admission
+    int i = 0;
+    while (i < wardCount && Wardname != wards[i]->getName()) i++;
+    Ward* targetWard = (i < wardCount) ? wards[i] : nullptr;
+    if(targetWard == nullptr ){
+        cout << "Ward not found for patient " << p.getName() << ". Admission failed." << endl;
+        return;
+    }
+    else if(!targetWard->admit(p)){
+        cout << "Ward " << targetWard->getName() << " is at full capacity. Admission failed for patient " << p.getName() << "." << endl;
+        return;
+    }
+    cout << "Patient " << p.getName() << " admitted to ward " << targetWard->getName() << "." << endl;
+
     if (liveCount >= liveCapacity) {
         // Expand capacity
         int newCapacity = liveCapacity * 2;
@@ -50,7 +65,19 @@ void Hospital::admit(const Patient& p) {
 
 void Hospital::discharge(int patientID) {
     for (int i = 0; i < liveCount; ++i) {
-        if (livePatients[i]->getID() == patientID) {
+            if (livePatients[i]->getID() == patientID) {
+            string Wardname = livePatients[i]->getWardName(); // Ensure ward name is set before admission
+            int j = 0;
+            while (j < wardCount && Wardname != wards[i]->getName()) i++;
+            Ward* targetWard = (i < wardCount) ? wards[j] : nullptr;
+            
+            if(targetWard == nullptr ){
+                cout << "Ward not found for patient " << livePatients[i]->getName() << ". Discharge failed." << endl;
+                return;
+            }
+            Bill* bill = new Bill(livePatients[i]->TotalTreatmentCost(), targetWard->getDailyRate() ,livePatients[i]->getDaysAdmitted());
+            
+            
             // Move to archived
             if (archiveCount >= archiveCapacity) {
                 // Expand capacity
@@ -71,9 +98,18 @@ void Hospital::discharge(int patientID) {
                 archivedBills = newBills;
                 archiveCapacity = newCapacity;
             }
-            archivedPatients[archiveCount++] = livePatients[i];
-            livePatients[i] = livePatients[--liveCount]; // Remove from live
+            archivedPatients[archiveCount] = new Patient(std::move(*livePatients[i]));
+            archivedBills[archiveCount] = bill;
+            delete livePatients[i]; // Free the old live slot , Remove from live
+
+            livePatients[i] = livePatients[--liveCount]; // Move the last patient into the empty slot
+            livePatients[liveCount] = nullptr; // Clear the old last slot for safety
+            
+            archiveCount++; // Actually increment the archive counter
+
+            cout << "Patient with ID " << patientID << " discharged and archived." << endl;
             return;
         }
     }
+    cout << "Patient with ID " << patientID << " not found for discharge." << endl;
 }

@@ -40,7 +40,8 @@ public:
     void    Display             ()const override;
     bool    isCritical          ()const;
     bool    HasOpertaion        ()const;
-    string  getWardName         ();
+    string  getWardName         ()const;
     void    SetWardName         ();
     string  getDiagnosis        ()const;
+    int     getDaysAdmitted     ()const;
 };

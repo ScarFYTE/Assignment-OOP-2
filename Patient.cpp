@@ -166,11 +166,11 @@ bool Patient::isCritical() const {
     return Critical;
 }
 
-bool Patient::HasOpertaion() const {
+bool Patient::HasOpertaion() const {    
     return Operation;
 }
 
-string Patient::getWardName() {
+string Patient::getWardName() const {
     return Ward;
 }
 
