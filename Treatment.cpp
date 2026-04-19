@@ -1,6 +1,8 @@
 #include "Treatment.h"
 
-Treatment::Treatment(string name, double cost, string performedBy) : name(name), cost(cost), Perfomedby(performedBy) {}
+class Employee; // Forward declaration to avoid circular dependency
+
+Treatment::Treatment(string name, double cost, Employee* performedBy) : name(name), cost(cost), Perfomedby(performedBy) {}
 
 string Treatment::getName() const {
     return name;
@@ -10,6 +12,10 @@ double Treatment::getCost() const {
     return cost;
 }
 
-string Treatment::getPerformedBy() const {
+Employee* Treatment::getPerformedBy() const {
     return Perfomedby;
+}
+
+void Treatment::SetPerformedBy(Employee* emp) {
+    Perfomedby = emp;
 }

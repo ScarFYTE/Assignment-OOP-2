@@ -1,5 +1,5 @@
 #include "Hospital.h"
-
+#include <utility>
 Hospital::Hospital() : liveCount(0), archiveCount(0), wardCount(0), staffCount(0),
     liveCapacity(10), archiveCapacity(10), wardCapacity(5), staffCapacity(20) {
     livePatients = new Patient*[liveCapacity];
@@ -68,14 +68,14 @@ void Hospital::discharge(int patientID) {
             if (livePatients[i]->getID() == patientID) {
             string Wardname = livePatients[i]->getWardName(); // Ensure ward name is set before admission
             int j = 0;
-            while (j < wardCount && Wardname != wards[i]->getName()) i++;
-            Ward* targetWard = (i < wardCount) ? wards[j] : nullptr;
+            while (j < wardCount && Wardname != wards[j]->getName()) j++;
+            Ward* targetWard = (j < wardCount) ? wards[j] : nullptr;
             
             if(targetWard == nullptr ){
                 cout << "Ward not found for patient " << livePatients[i]->getName() << ". Discharge failed." << endl;
                 return;
             }
-            Bill* bill = new Bill(livePatients[i]->TotalTreatmentCost(), targetWard->getDailyRate() ,livePatients[i]->getDaysAdmitted());
+            Bill* bill = new Bill(livePatients[i]->TotalTreatmentCost(), targetWard->getDailyRate()*livePatients[i]->getDaysAdmitted() ,500.0);
             
             
             // Move to archived
@@ -113,3 +113,72 @@ void Hospital::discharge(int patientID) {
     }
     cout << "Patient with ID " << patientID << " not found for discharge." << endl;
 }
+
+Patient** Hospital::filterPatients(bool (*predicate)(const Patient&), int& outCount) const {
+    Patient** result = new Patient*[liveCount];
+    outCount = 0;
+    for (int i = 0; i < liveCount; ++i) {
+        if (predicate(*livePatients[i])) {
+            result[outCount++] = livePatients[i];
+        }
+    }
+    return result;
+}
+
+Patient** Hospital::sortPatients(bool (*comparator)(const Patient&, const Patient&), int& outCount) const {
+    Patient** result = new Patient*[liveCount];
+    for (int i = 0; i < liveCount; ++i) {
+        result[i] = livePatients[i];
+    }
+    outCount = liveCount;
+    // Simple bubble sort for demonstration (not efficient for large datasets)
+    for (int i = 0; i < outCount - 1; ++i) {
+        for (int j = 0; j < outCount - i - 1; ++j) {
+            if (comparator(*result[j + 1], *result[j])) {
+                swap(result[j], result[j + 1]);
+            }
+        }
+    }
+    return result;
+}
+
+Employee** Hospital::filterStaff(bool (*predicate)(const Employee&), int& outCount) const {
+    Employee** result = new Employee*[staffCount];
+    outCount = 0;
+    for (int i = 0; i < staffCount; ++i) {
+        if (predicate(*staff[i])) {
+            result[outCount++] = staff[i];
+        }
+    }
+    return result;
+}
+
+double Hospital::wardRevenue(string wardName) const {
+    double totalRevenue = 0.0;
+    for (int i = 0; i < archiveCount; ++i) {
+        if (archivedPatients[i] != nullptr && archivedPatients[i]->getWardName() == wardName) {
+            totalRevenue += archivedBills[i]->total();
+        }
+    }
+    return totalRevenue;
+}
+
+Patient** Hospital::treatedBy(int staffID, int& outCount) const {
+    Patient** result = new Patient*[liveCount];
+    outCount = 0;
+    for (int i = 0; i < liveCount; ++i) {
+        for (int j = 0; j < livePatients[i]->TreatmentCount(); ++j) {
+            Employee* doc = livePatients[i]->getTreatments()[j]->getPerformedBy();
+            
+            if (doc != nullptr && doc->getID() == staffID) {
+            result[outCount++] = livePatients[i];
+            break; 
+            }
+            if (livePatients[i]->getTreatments()[j]->getPerformedBy()->getID() == staffID) {
+                result[outCount++] = livePatients[i];
+                break; // Move to next patient after first match
+            }
+        }
+    }
+    return result;
+}   

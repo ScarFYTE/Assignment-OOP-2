@@ -29,7 +29,7 @@ int Ward::getPatientCount() const {
 }
 
 int Ward::getCapacity ()const {
-    return Patients.size();
+    return Patients.capacity();
 }
 
 string Ward::getName ()const {

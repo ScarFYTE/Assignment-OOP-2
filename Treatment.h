@@ -1,16 +1,20 @@
 #pragma once
 #include <string>
-using namespace std;
+#include "HospitalStaff.h"
+
+class Employee; // Forward declaration to avoid circular dependency
+using namespace std;    
 
 
 struct Treatment{
     string name;
     double cost;
-    string Perfomedby;
+    Employee* Perfomedby;
 
     public :
-    Treatment(string name, double cost, string performedBy);
+    Treatment(string name, double cost, Employee* performedBy);
     string getName() const;
     double getCost() const;
-    string getPerformedBy() const;
+    Employee* getPerformedBy() const;
+    void      SetPerformedBy(Employee* emp);
 };

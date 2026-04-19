@@ -1,4 +1,8 @@
 #include "HospitalStaff.h"
+#include "Patient.h"
+#include "Treatment.h"  
+
+
 
 Employee::Employee(string name, Date dob, int id, long long int phone, double salary, string department) : Person(name, dob, id, phone),salary(salary),department(department){}
 
@@ -31,6 +35,8 @@ void GP::consultPatient(Patient& p)const {
     cout << name << " is consulting patient " << p.getName() << endl;
     cout << "Diagnosis: " << p.getDiagnosis() << endl;
     cout << "Billing Rate: $" << calculateBillingRate() << endl;
+    Treatment consultation("Consultation", calculateBillingRate(), const_cast<GP*>(this)); // Create a treatment for the consultation
+    p.addTreatment(consultation); // Add the consultation treatment to the patient's record
 }
 
 void GP::writePrescription(Patient& p, string prescription)const {
@@ -60,6 +66,9 @@ void Surgeon::performOperation(Patient& p)const {
     cout << name << " is performing an operation on patient " << p.getName() << endl;
     cout << "Diagnosis: " << p.getDiagnosis() << endl;
     cout << "Billing Rate: $" << calculateBillingRate() << endl;
+
+    Treatment operation("Operation", calculateBillingRate(), const_cast<Surgeon*>(this)); // Create a treatment for the operation
+    p.addTreatment(operation); // Add the operation treatment to the patient's record
 }
 
 string Surgeon::getSpecialisation()const {
@@ -84,10 +93,13 @@ void Nurse::Display()const {
 
 }
 
-void Nurse::administerTreatment(Patient& p, const Treatment& t)const {
+void Nurse::administerTreatment(Patient& p, Treatment& t)const {
     cout << name << " is administering treatment to patient " << p.getName() << endl;
     cout << "Treatment: " << t.getName() << endl;
     cout << "Billing Rate: $" << calculateBillingRate() << endl;
+    t.SetPerformedBy(const_cast<Nurse*>(this)); // Set the performing nurse for the treatment
+    p.addTreatment(t);
+    
 }
 
 string Nurse::getAssignedWard()const {
