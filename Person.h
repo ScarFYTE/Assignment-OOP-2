@@ -17,12 +17,12 @@ class Person {
     Date DOB;
     
     int ID;
-    int Phone;
+    long long int Phone;
     
     public:
     
     
-    Person(string name, Date dob, int ID, int Phone): name(name), DOB(dob), ID(ID), Phone(Phone) {}  
+    Person(string name, Date dob, int ID, long long int Phone): name(name), DOB(dob), ID(ID), Phone(Phone) {}  
 
     string getName() const {
         return name;

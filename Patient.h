@@ -12,13 +12,15 @@ class Patient : public Person{
     string Diagnosis;
     Date AdmissionDate;
     string Ward;
-    vector<Treatment> Treatments;
+    Treatment** Treatments;
+    int treatmentCount;
+    int treatmentCapacity;
     bool Critical;
     bool Operation;
 
 public:
 
-    Patient(string name, Date dob, int id, string phone, string diagnosis, string admissionDate, bool critical = false, bool Operation = false);
+    Patient(string name, Date dob, int id, long long int phone, string diagnosis, Date admissionDate, bool critical = false, bool Operation = false);
     
     //Deep Copy
     Patient(const Patient &P);
