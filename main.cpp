@@ -19,7 +19,6 @@
 
 using namespace std;
 
-// ── tiny helper ──────────────────────────────────────────────────────────────
 static void check(bool condition, const char* label) {
     if (condition)
         cout << "  PASS: " << label << "\n";
@@ -27,15 +26,12 @@ static void check(bool condition, const char* label) {
         cout << "  FAIL: " << label << "\n";
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 int main() {
 
-    // ── shared staff (needed across several TCs) ─────────────────────────────
     GP      gp1     ("Dr. Ayesha Khan",  Date(5,3,1978),  101, 3001001001LL, 250000, "Outpatient",   3000.0);
     Surgeon surgeon1("Dr. Bilal Raza",   Date(12,7,1971), 102, 3002002002LL, 350000, "Surgery",      "Cardiothoracic", 20000.0);
     Nurse   nurse1  ("Nurse Sara Ahmed", Date(20,9,1990), 103, 3003003003LL, 80000,  "General Ward", "Ward A", 500.0);
 
-    // ── shared patients ───────────────────────────────────────────────────────
     Patient patient1("Ali Khan",    Date(1,1,1985),  1001, 3331001001LL, "Flu",            Date(1,3,2026), false, false);
     Patient patient2("Sara Baig",   Date(5,5,1990),  1002, 3332002002LL, "Cardiac arrest", Date(1,3,2026), true,  false);
     Patient patient3("Hamid Raza",  Date(10,10,1980),1003, 3333003003LL, "Appendicitis",   Date(1,3,2026), false, true);
@@ -46,16 +42,13 @@ int main() {
     patient3.SetWardName("Surgical Ward");
     patient4.SetWardName("Ward A");
 
-    // ─────────────────────────────────────────────────────────────────────────
     cout << "\n=== TC-01: Polymorphic Display ===\n";
     {
-        // One loop, four different outputs — no if/else or type-checking
         vector<Person*> people = { &gp1, &surgeon1, &nurse1, &patient1 };
         for (auto* p : people) {
             cout << "----------------------------------------\n";
             p->Display();
         }
-        // Manual verification: each type printed role-specific fields
         check(true, "Display() called via Person* on GP, Surgeon, Nurse, Patient — no if/else in loop");
     }
 
@@ -82,8 +75,7 @@ int main() {
         check(true, "operator<< printed without crash");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    cout << "\n=== TC-03: Ward Comparison Operators ===\n";
+    cout << "\n TC-03: Ward Comparison Operators \n";
     {
         GeneralWard w1("Ward A",  20, 2000.0);   // will be 5/20 = 25%
         ICU         w2("ICU",      8, 8000.0);   // will be 7/8  = 87.5%
@@ -109,8 +101,7 @@ int main() {
         check(!(w1 == w2), "w1 != w2");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    cout << "\n=== TC-04: ICU Admission Rule Enforcement ===\n";
+    cout << "\nTC-04: ICU Admission Rule Enforcement\n";
     {
         Patient critical("Ali Khan2",  Date(1,1,1985), 2001, 3001001001LL,
                          "Cardiac arrest", Date(1,3,2026), true,  false);
@@ -130,29 +121,23 @@ int main() {
         check(sw.admit(routine)   == false, "SurgicalWard rejects patient without operation");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
     cout << "\n=== TC-05: Double-Booking Prevention ===\n";
     {
         AppointmentBook book;
 
-        // First booking — should succeed
         bool first = book.add(Appointment(patient1, gp1, "2026-04-10", "10:00"));
         check(first == true, "First appointment added");
 
-        // Same doctor, same date, same slot — should be rejected
         bool duplicate = book.add(Appointment(patient2, gp1, "2026-04-10", "10:00"));
+
         check(duplicate == false, "Double-booking rejected");
 
-        // Same doctor, different slot — should succeed
         bool different = book.add(Appointment(patient2, gp1, "2026-04-10", "11:00"));
         check(different == true, "Different time slot accepted");
 
-        // Different doctor, same slot — should succeed
         bool diffDoc = book.add(Appointment(patient1, surgeon1, "2026-04-10", "10:00"));
         check(diffDoc == true, "Different doctor same slot accepted");
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
     cout << "\n=== TC-06: Copy Independence (Deep Copy) ===\n";
     {
         Patient original("Hamid Raza2", Date(10,10,1980), 3001, 3003003003LL,
@@ -180,7 +165,6 @@ int main() {
         // we test the move constructor directly then discharge via a
         // fully-wired hospital below in TC-10 setup.
 
-        // Direct move constructor test:
         Patient src("Move Patient", Date(1,1,1990), 4001, 3004004004LL,
                     "Test", Date(1,3,2026), false, false);
         Treatment t("X-ray", 300.0, nullptr);
@@ -190,11 +174,9 @@ int main() {
 
         check(src.TreatmentCount() == 0, "Source treatment count is 0 after move");
         check(dst.TreatmentCount() == 1, "Destination has the treatment after move");
-        // src goes out of scope — no double-free = test passes if no crash
         check(true, "No crash on scope exit (no double-free)");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
     cout << "\n=== TC-08: Composable Lambda Filtering & Sorting ===\n";
     {
         // Build a small set of live patients to query
@@ -242,7 +224,6 @@ int main() {
         check(true,   "No if/else inside filter/sort logic — lambdas passed as predicates");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
     cout << "\n=== TC-09: Billing Rate Polymorphism ===\n";
     {
         vector<Employee*> staff = { &gp1, &surgeon1, &nurse1 };
@@ -264,12 +245,6 @@ int main() {
     // ─────────────────────────────────────────────────────────────────────────
     cout << "\n=== TC-10: Ward Revenue Report ===\n";
     {
-        // Build bills manually (simulating 3 discharged patients from "Ward A")
-        // Bills: 10000, 15000, 8000  →  expected revenue = 33000
-        // Admin fee is 500 each so treatment+ward portions:
-        //   b1: treatmentTotal=5000, wardStay=4500, admin=500  -> total=10000
-        //   b2: treatmentTotal=8000, wardStay=6500, admin=500  -> total=15000
-        //   b3: treatmentTotal=3000, wardStay=4500, admin=500  -> total= 8000
 
         Bill b1(5000.0, 4500.0, 500.0);
         Bill b2(8000.0, 6500.0, 500.0);
@@ -285,11 +260,7 @@ int main() {
         check(b2.total() == 15000.0, "Bill 2 total is PKR 15000");
         check(b3.total() ==  8000.0, "Bill 3 total is PKR 8000");
         check(expectedRevenue == 33000.0, "Total ward revenue == PKR 33000");
-
-        // Verify operator+ accumulation matches manual sum
         Bill combined = b1 + b2 + b3;
-        // combined will have double/triple admin fees due to operator+ design,
-        // but individual bill totals and manual sum are correct
         check(b1.total() + b2.total() + b3.total() == 33000.0,
               "wardRevenue accumulation: sum of individual bills == 33000");
     }

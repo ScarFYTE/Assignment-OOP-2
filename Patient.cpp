@@ -186,15 +186,21 @@ string Patient::getDiagnosis() const {
 Treatment** Patient::getTreatments() const {
     return Treatments;
 }
+
 int Patient::getDaysAdmitted() const {
-    Date currentDate; 
-    // Get current date using chrono
     auto now = chrono::system_clock::now();
     time_t now_c = chrono::system_clock::to_time_t(now);
     tm* parts = localtime(&now_c);
-    currentDate.day = parts->tm_mday;
-    currentDate.month = parts->tm_mon + 1; // tm_mon is 0
-    currentDate.year = parts->tm_year + 1900; // tm_year is years since 1900
-    
+    Date currentDate;
+    currentDate.day   = parts->tm_mday;
+    currentDate.month = parts->tm_mon + 1;
+    currentDate.year  = parts->tm_year + 1900;
     return getDaysAdmitted(currentDate);
+}
+
+int Patient::getDaysAdmitted(Date dischargeDate) const {
+    int admitDays = AdmissionDate.year * 365 + AdmissionDate.month * 30 + AdmissionDate.day;
+    int dischDays = dischargeDate.year  * 365 + dischargeDate.month  * 30 + dischargeDate.day;
+    int diff = dischDays - admitDays;
+    return (diff > 0) ? diff : 1;
 }
