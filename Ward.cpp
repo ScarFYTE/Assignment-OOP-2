@@ -1,23 +1,41 @@
 #include <iostream>
-#include <vector>
 #include "Ward.h"
 #include "GeneralWard.h"
 #include "ICU.h"
 #include "SurgicalWard.h"
+
 using namespace std;
 
-Ward::Ward(string name, int capacity, double dailyRate) : name(name), patientCount(0), dailyRate(dailyRate) {
-    Patients.reserve(capacity);
+// --- Base Class Implementation ---
+
+Ward::Ward(string name, int capacity, double dailyRate) 
+    : name(name), capacity(capacity), patientCount(0), dailyRate(dailyRate) {
+    // Allocate the array of pointers
+    patients = new Patient*[capacity];
+    for (int i = 0; i < capacity; ++i) {
+        patients[i] = nullptr;
+    }
 }
 
 Ward::~Ward() {
-    Patients.clear();
+    // Free the individual patients first
+    for (int i = 0; i < patientCount; ++i) {
+        delete patients[i];
+    }
+    // Free the array itself
+    delete[] patients;
 }
 
 void Ward::removePatient(int patientID) {
-    for (auto it = Patients.begin(); it != Patients.end(); ++it) {
-        if (it->getID() == patientID) {
-            Patients.erase(it);
+    for (int i = 0; i < patientCount; ++i) {
+        if (patients[i]->getID() == patientID) {
+            delete patients[i]; // Free the memory
+            
+            // Shift remaining elements to the left to maintain order
+            for (int j = i; j < patientCount - 1; ++j) {
+                patients[j] = patients[j + 1];
+            }
+            patients[patientCount - 1] = nullptr; // Clear the old last slot
             --patientCount;
             return;
         }
@@ -28,45 +46,44 @@ int Ward::getPatientCount() const {
     return patientCount;
 }
 
-int Ward::getCapacity ()const {
-    return Patients.capacity();
+int Ward::getCapacity() const {
+    return capacity;
 }
 
-string Ward::getName ()const {
+string Ward::getName() const {
     return name;
 }
 
-double Ward::getDailyRate()const{
+double Ward::getDailyRate() const {
     return dailyRate;
 }
 
-double Ward::occupancyPercent()const{
-    return (patientCount / double(Patients.size())) * 100;
+double Ward::occupancyPercent() const {
+    if (capacity == 0) return 0.0;
+    return (patientCount / double(capacity)) * 100.0;
 }
 
-bool Ward::operator<(const Ward& other)const{
+bool Ward::operator<(const Ward& other) const {
     return this->occupancyPercent() < other.occupancyPercent();
 }
 
-
-bool Ward::operator==(const Ward& other)const{
+bool Ward::operator==(const Ward& other) const {
     return this->occupancyPercent() == other.occupancyPercent();
 }
 
-
-bool Ward::operator>(const Ward& other)const{
+bool Ward::operator>(const Ward& other) const {
     return this->occupancyPercent() > other.occupancyPercent();
 }
 
 
-//General Ward Implementation
+// --- General Ward Implementation ---
 
-GeneralWard::GeneralWard(string name,int capacity, double dailyRate):Ward(name,capacity,dailyRate){}
+GeneralWard::GeneralWard(string name, int capacity, double dailyRate) : Ward(name, capacity, dailyRate) {}
 
-bool GeneralWard::admit(const Patient& P){
-    if(patientCount < Patients.capacity()){
-        Patients.push_back(P);
-        patientCount++;
+bool GeneralWard::admit(const Patient& P) {
+    if (patientCount < capacity) {
+        // Coded by Kim china
+        patients[patientCount++] = new Patient(P); // Dynamically allocate a copy
         return true;
     }
     return false;
@@ -75,20 +92,21 @@ bool GeneralWard::admit(const Patient& P){
 void GeneralWard::display() const {
     cout << "General Ward: " << name << endl;
     cout << "Daily Rate: " << dailyRate << endl;
-    cout << "Patients Admitted: " << patientCount << "/" << Patients.capacity() << endl;
-    for (const auto& patient : Patients) {
-        patient.Display();
+    cout << "Patients Admitted: " << patientCount << "/" << capacity << endl;
+    for (int i = 0; i < patientCount; ++i) {
+        patients[i]->Display();
         cout << "##################" << endl;
     }
 }
 
-//ICU Implementation
-ICU::ICU(string name,int capacity, double dailyRate):Ward(name,capacity,dailyRate){}
 
-bool ICU::admit(const Patient& P){
-    if(P.isCritical() && patientCount < Patients.capacity()){
-        Patients.push_back(P);
-        patientCount++;
+// --- ICU Implementation ---
+
+ICU::ICU(string name, int capacity, double dailyRate) : Ward(name, capacity, dailyRate) {}
+
+bool ICU::admit(const Patient& P) {
+    if (P.isCritical() && patientCount < capacity) {
+        patients[patientCount++] = new Patient(P);
         return true;
     }
     return false;
@@ -97,21 +115,21 @@ bool ICU::admit(const Patient& P){
 void ICU::display() const {
     cout << "ICU: " << name << endl;
     cout << "Daily Rate: " << dailyRate << endl;
-    cout << "Patients Admitted: " << patientCount << "/" << Patients.capacity() << endl;
-    for (const auto& patient : Patients) {
-        patient.Display();
+    cout << "Patients Admitted: " << patientCount << "/" << capacity << endl;
+    for (int i = 0; i < patientCount; ++i) {
+        patients[i]->Display();
         cout << "##################" << endl;
     }
 }
 
-//Surgical Ward Implementation
 
-SurgicalWard::SurgicalWard(string name,int capacity, double dailyRate):Ward(name,capacity,dailyRate){}
+// --- Surgical Ward Implementation ---
 
-bool SurgicalWard::admit(const Patient& P){
-    if(P.HasOpertaion() && patientCount < Patients.capacity()){
-        Patients.push_back(P);
-        patientCount++;
+SurgicalWard::SurgicalWard(string name, int capacity, double dailyRate) : Ward(name, capacity, dailyRate) {}
+
+bool SurgicalWard::admit(const Patient& P) {
+    if (P.HasOpertaion() && patientCount < capacity) {
+        patients[patientCount++] = new Patient(P);
         return true;
     }
     return false;
@@ -120,12 +138,9 @@ bool SurgicalWard::admit(const Patient& P){
 void SurgicalWard::display() const {
     cout << "Surgical Ward: " << name << endl;
     cout << "Daily Rate: " << dailyRate << endl;
-    cout << "Patients Admitted: " << patientCount << "/" << Patients.capacity() << endl;
-    for (const auto& patient : Patients) {
-        patient.Display();
+    cout << "Patients Admitted: " << patientCount << "/" << capacity << endl;
+    for (int i = 0; i < patientCount; ++i) {
+        patients[i]->Display();
         cout << "##################" << endl;
     }
 }
-
-
-
