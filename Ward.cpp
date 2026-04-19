@@ -41,7 +41,7 @@ double Ward::getDailyRate()const{
 }
 
 double Ward::occupancyPercent()const{
-    return (patientCount / double(Patients.size())) * 100;
+    return (patientCount / double(Patients.capacity())) * 100;
 }
 
 bool Ward::operator<(const Ward& other)const{
