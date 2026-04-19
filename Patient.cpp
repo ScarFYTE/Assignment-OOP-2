@@ -127,6 +127,58 @@ void Patient::addTreatment(Treatment& T){
     
 }   
 
+int Patient::TreatmentCount(){
+    return treatmentCount;
+}
+
+double Patient::TotalTreatmentCost(){
+    double totalCost = 0.0;
+    for (int i = 0; i < treatmentCount; i++){
+        totalCost += Treatments[i]->getCost();
+    }
+    return totalCost;
+}
+
+Bill Patient::GenerateBill(double DailyRate, int days){
+    double WardStayFee = DailyRate * days;
+    double treatmentTotal = TotalTreatmentCost();
+    return Bill(treatmentTotal, WardStayFee);
+}
+
+void Patient::Display() const {
+    cout << "Patient Name: " << name << endl;
+    cout << "DOB: " << getDOB() << endl;
+    cout << "ID: " << ID << endl;
+    cout << "Phone: " << Phone << endl;
+    cout << "Diagnosis: " << Diagnosis << endl;
+    cout << "Admission Date: " << getDOB() << endl;
+    cout << "Ward: " << Ward << endl;
+    cout << "Critical Condition: " << (Critical ? "Yes" : "No") << endl;
+    cout << "Underwent Operation: " << (Operation ? "Yes" : "No") << endl;
+    cout << "Treatments:" << endl;
+    for (int i = 0; i < treatmentCount; i++){
+        cout << "- " << Treatments[i]->getName() << ": $" << Treatments[i]->getCost() 
+             << ", Performed by: " << Treatments[i]->getPerformedBy() << endl;
+    }
+}
+
+bool Patient::isCritical() const {
+    return Critical;
+}
+
+bool Patient::HasOpertaion() const {
+    return Operation;
+}
+
+string Patient::getWardName() {
+    return Ward;
+}
+
+void Patient::SetWardName() {
+    cout << "Enter new ward name: ";
+    cin >> Ward;
+}
+
 
 
 
