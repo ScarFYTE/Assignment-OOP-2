@@ -1,8 +1,8 @@
 #pragma once
+
 #include<iostream>
 #include <string>
 #include <vector>
-#include "Person.h"
 #include "Person.h"
 #include "Patient.h"
 using namespace std;
@@ -13,7 +13,7 @@ protected:
     double salary;
     string department;
 public:
-    Employee(string name, string dob, int id, string phone,double salary, string department);
+    Employee(string name, Date dob, int id, long long int phone,double salary, string department);
     virtual double calculateBillingRate() const = 0;
     void Display() const override = 0;
     string getDepartment() const;
@@ -26,7 +26,7 @@ class GP : public Employee {
 private:
     double consultationFee;
 public:
-    GP(string name, string dob, int id, string phone,double salary, string department, double consultationFee);
+    GP(string name, Date dob, int id, long long int phone,double salary, string department, double consultationFee);
 
     double calculateBillingRate() const override;
     void Display() const override;                  
@@ -39,7 +39,7 @@ private:
     string specialisation;
     double operationFee;
 public:
-    Surgeon(string name, string dob, int id, string phone,
+    Surgeon(string name, Date dob, int id, long long int phone,
             double salary, string department,
             string specialisation, double operationFee);
 
@@ -54,7 +54,7 @@ private:
     string assignedWard;
     double hourlyCareFee;
 public:
-    Nurse(string name, string dob, int id, string phone,
+    Nurse(string name, Date dob, int id, long long int phone,
           double salary, string department,
           string assignedWard, double hourlyCareFee);
 

@@ -179,7 +179,9 @@ void Patient::SetWardName() {
     cin >> Ward;
 }
 
-
+string Patient::getDiagnosis() const {
+    return Diagnosis;
+}
 
 
 

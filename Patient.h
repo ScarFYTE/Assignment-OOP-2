@@ -42,4 +42,5 @@ public:
     bool    HasOpertaion        ()const;
     string  getWardName         ();
     void    SetWardName         ();
+    string  getDiagnosis        ()const;
 };
