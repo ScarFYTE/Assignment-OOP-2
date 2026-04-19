@@ -1,3 +1,4 @@
+#pragma once
 #include "Patient.h"
 
 class Ward {
@@ -23,32 +24,4 @@ public:
     bool operator<(const Ward& other) const;    
     bool operator>(const Ward& other) const;
     bool operator==(const Ward& other) const;
-};
-
-class GeneralWard : public Ward {
-public:
-    GeneralWard(string name, int capacity, double dailyRate = 2000.0);
-    bool admit(const Patient& p) override;   // accepts anyone
-    void display() const;
-};
-
-class ICU : public Ward {
-public:
-    ICU(string name, int capacity, double dailyRate = 8000.0);
-    bool admit(const Patient& p) override;   // only critical patients — TC-04
-    void display() const;
-};
-
-class SurgicalWard : public Ward {
-public:
-    SurgicalWard(string name, int capacity, double dailyRate = 5000.0);
-    bool admit(const Patient& p) override;   // only patients with operation
-    void display() const;
-};
-
-class SurgicalWard : public Ward {
-public:
-    SurgicalWard(string name, int capacity, double dailyRate = 5000.0);
-    bool admit(const Patient& p) override;   // only patients with operation
-    void display() const;
 };

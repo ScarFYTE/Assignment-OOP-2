@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Person.h"
 #include <vector>
 #include "Treatment.h"
@@ -34,8 +36,8 @@ public:
     double  TotalTreatmentCost  ();
     Bill    GenerateBill        (double DailyRate ,int days);
     void    Display             ()const override;
-    bool    isCritical          ();
-    bool    HasOpertaion        ();
+    bool    isCritical          ()const;
+    bool    HasOpertaion        ()const;
     string  getWardName         ();
     void    SetWardName         ();
 };

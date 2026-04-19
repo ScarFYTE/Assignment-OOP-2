@@ -1,3 +1,4 @@
+#pragma once
 #include "Patient.h"
 #include "HospitalStaff.h"
 
