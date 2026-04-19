@@ -16,6 +16,9 @@ Patient::Patient(const Patient &P) : Person(P.name, P.DOB, P.ID, P.Phone), Diagn
     for (int i = 0; i < treatmentCount; ++i) {
         Treatments[i] = new Treatment(*P.Treatments[i]);
     }
+    for (int i = treatmentCount; i < treatmentCapacity; i++){
+        Treatments[i] = nullptr;
+    }
 }
 
 
@@ -33,7 +36,7 @@ Patient& Patient::operator=(const Patient& p) {
     if (this == &p) {
         return *this;
     }
-    Person::operator=(std::move(p));
+    Person::operator=(p);
     Diagnosis = p.Diagnosis;
     AdmissionDate = p.AdmissionDate;
     Ward = p.Ward;
@@ -50,6 +53,10 @@ Patient& Patient::operator=(const Patient& p) {
     Treatments = new Treatment*[treatmentCapacity];
     for (int i = 0; i < treatmentCount; ++i) {
         Treatments[i] = new Treatment(*p.Treatments[i]);
+    }
+    
+    for (int i = treatmentCount; i < treatmentCapacity; i++){
+        Treatments[i] = nullptr;
     }
     return *this;
 }
@@ -76,6 +83,7 @@ Patient& Patient::operator=(Patient &&p) noexcept {
 
     p.Treatments = nullptr;
     p.treatmentCount = 0;
+    p.treatmentCapacity = 0;
 
     return *this;
 }
@@ -94,7 +102,30 @@ Patient::~Patient(){
 
 //###############################################
 
-Patient::addTreatment()
+void Patient::addTreatment(Treatment& T){
+    if(treatmentCount==treatmentCapacity){
+        treatmentCapacity *= 2;
+
+        //Storing the previous Treatments temporarily
+        Treatment **Previos = Treatments;
+        Treatments = new Treatment *[treatmentCapacity]; // initializing new Capacity for the resized Array
+        
+        //reassigning the previous Treatments
+        for (int i = 0; i < treatmentCount; i++){
+            Treatments[i] = Previos[i];
+        }
+
+        //Allocating space for the new treatments
+        for (int i = treatmentCount; i < treatmentCapacity;i++){
+            Treatments[i] = nullptr;
+        }
+        //free up the previous
+        delete[] Previos;
+    }
+    //add new treatment
+    Treatments[treatmentCount++] = new Treatment(T);
+    
+}   
 
 
 

@@ -29,9 +29,9 @@ public:
 
     Patient& operator=(const Patient& p);
 
-    Patient &operator=(Patient &&p) noexcept;
+    Patient& operator=(Patient &&p) noexcept;
 
-    ~Patient(){}
+    ~Patient();
 
     void    addTreatment        (Treatment &T);
     int     TreatmentCount      ();
