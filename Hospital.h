@@ -13,9 +13,13 @@ private:
     Employee** staff;
     Bill** archivedBills;     
     int liveCount, archiveCount, wardCount, staffCount;
+    int liveCapacity, archiveCapacity, wardCapacity, staffCapacity;
     AppointmentBook book;
+
+
 public:
     Hospital();
+    Hospital(const Hospital&) = delete;   // no copying hospitals
     ~Hospital();
 
     void admit(const Patient& p);
