@@ -46,7 +46,6 @@ int main() {
     {
         vector<Person*> people = { &gp1, &surgeon1, &nurse1, &patient1 };
         for (auto* p : people) {
-            cout << "----------------------------------------\n";
             p->Display();
         }
         check(true, "Display() called via Person* on GP, Surgeon, Nurse, Patient — no if/else in loop");
@@ -154,8 +153,7 @@ int main() {
         check(copy.TreatmentCount()     == 2, "Copy has 2 treatments");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    cout << "\n=== TC-07: Move Semantics / Discharge ===\n";
+    cout << "\nTC-07: Move Semantics / Discharge\n";
     {
         Hospital h;
 
@@ -165,8 +163,7 @@ int main() {
         // we test the move constructor directly then discharge via a
         // fully-wired hospital below in TC-10 setup.
 
-        Patient src("Move Patient", Date(1,1,1990), 4001, 3004004004LL,
-                    "Test", Date(1,3,2026), false, false);
+        Patient src("Move Patient", Date(1,1,1990), 4001, 3004004004LL,"Test", Date(1,3,2026), false, false);
         Treatment t("X-ray", 300.0, nullptr);
         src.addTreatment(t);
 
@@ -242,7 +239,6 @@ int main() {
         check(true, "No dynamic_cast or typeid used — virtual dispatch only");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
     cout << "\n=== TC-10: Ward Revenue Report ===\n";
     {
 
