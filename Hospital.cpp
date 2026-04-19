@@ -1,5 +1,5 @@
 #include "Hospital.h"
-
+#include <utility>
 Hospital::Hospital() : liveCount(0), archiveCount(0), wardCount(0), staffCount(0),
     liveCapacity(10), archiveCapacity(10), wardCapacity(5), staffCapacity(20) {
     livePatients = new Patient*[liveCapacity];
@@ -68,8 +68,8 @@ void Hospital::discharge(int patientID) {
             if (livePatients[i]->getID() == patientID) {
             string Wardname = livePatients[i]->getWardName(); // Ensure ward name is set before admission
             int j = 0;
-            while (j < wardCount && Wardname != wards[i]->getName()) i++;
-            Ward* targetWard = (i < wardCount) ? wards[j] : nullptr;
+            while (j < wardCount && Wardname != wards[j]->getName()) i++;
+            Ward* targetWard = (j < wardCount) ? wards[j] : nullptr;
             
             if(targetWard == nullptr ){
                 cout << "Ward not found for patient " << livePatients[i]->getName() << ". Discharge failed." << endl;
