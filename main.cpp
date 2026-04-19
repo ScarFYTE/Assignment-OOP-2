@@ -1,7 +1,3 @@
-// main.cpp  —  MediCore HW #2  —  TC-01 through TC-10
-// Compile:  g++ -std=c++17 -o medicore main.cpp Appointment.cpp Bill.cpp
-//                Hospitalstaff.cpp Patient.cpp Treatment.cpp Ward.cpp Hospital.cpp
-
 #include <iostream>
 #include <vector>
 #include <cassert>
