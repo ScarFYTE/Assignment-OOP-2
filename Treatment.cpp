@@ -15,3 +15,7 @@ double Treatment::getCost() const {
 Employee* Treatment::getPerformedBy() const {
     return Perfomedby;
 }
+
+void Treatment::SetPerformedBy(Employee* emp) {
+    Perfomedby = emp;
+}

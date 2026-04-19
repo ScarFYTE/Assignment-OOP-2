@@ -5,9 +5,8 @@
 #include <vector>
 #include "Person.h"
 
-class Patient;
-class Treatment;
-// ----------------------------
+class Patient; // Forward declaration to avoid circular dependency
+class Treatment; // Forward declaration to avoid circular dependency
 
 using namespace std;
 
@@ -64,6 +63,6 @@ public:
 
     double calculateBillingRate() const override;  
     void Display() const override;                 
-    void administerTreatment(Patient& p, const Treatment& t) const;
+    void administerTreatment(Patient& p, Treatment& t) const;
     string getAssignedWard() const;
 };

@@ -8,6 +8,10 @@ struct Date{
     int day;
     int month;
     int year;
+
+    string toString() const {
+        return to_string(day) + "/" + to_string(month) + "/" + to_string(year);
+    }
 };
 
 class Person {

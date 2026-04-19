@@ -68,14 +68,14 @@ void Hospital::discharge(int patientID) {
             if (livePatients[i]->getID() == patientID) {
             string Wardname = livePatients[i]->getWardName(); // Ensure ward name is set before admission
             int j = 0;
-            while (j < wardCount && Wardname != wards[j]->getName()) i++;
+            while (j < wardCount && Wardname != wards[j]->getName()) j++;
             Ward* targetWard = (j < wardCount) ? wards[j] : nullptr;
             
             if(targetWard == nullptr ){
                 cout << "Ward not found for patient " << livePatients[i]->getName() << ". Discharge failed." << endl;
                 return;
             }
-            Bill* bill = new Bill(livePatients[i]->TotalTreatmentCost(), targetWard->getDailyRate() ,livePatients[i]->getDaysAdmitted());
+            Bill* bill = new Bill(livePatients[i]->TotalTreatmentCost(), targetWard->getDailyRate()*livePatients[i]->getDaysAdmitted() ,500.0);
             
             
             // Move to archived
@@ -168,6 +168,12 @@ Patient** Hospital::treatedBy(int staffID, int& outCount) const {
     outCount = 0;
     for (int i = 0; i < liveCount; ++i) {
         for (int j = 0; j < livePatients[i]->TreatmentCount(); ++j) {
+            Employee* doc = livePatients[i]->getTreatments()[j]->getPerformedBy();
+            
+            if (doc != nullptr && doc->getID() == staffID) {
+            result[outCount++] = livePatients[i];
+            break; 
+            }
             if (livePatients[i]->getTreatments()[j]->getPerformedBy()->getID() == staffID) {
                 result[outCount++] = livePatients[i];
                 break; // Move to next patient after first match

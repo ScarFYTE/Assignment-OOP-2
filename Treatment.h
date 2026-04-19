@@ -1,7 +1,9 @@
 #pragma once
 #include <string>
 #include "HospitalStaff.h"
-using namespace std;
+
+class Employee; // Forward declaration to avoid circular dependency
+using namespace std;    
 
 
 struct Treatment{
@@ -14,4 +16,5 @@ struct Treatment{
     string getName() const;
     double getCost() const;
     Employee* getPerformedBy() const;
+    void      SetPerformedBy(Employee* emp);
 };

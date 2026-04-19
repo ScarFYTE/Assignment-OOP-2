@@ -33,7 +33,7 @@ public:
 
     ~Patient();
 
-    void        addTreatment        (Treatment &T);
+    Treatment*  addTreatment        (Treatment &T);
     int         TreatmentCount      ();
     double      TotalTreatmentCost  ();
     Bill        GenerateBill        (double DailyRate ,int days);
@@ -41,8 +41,9 @@ public:
     bool        isCritical          ()const;
     bool        HasOpertaion        ()const;
     string      getWardName         ()const;
-    void        SetWardName         ();
+    void        SetWardName         (string wardName);
     string      getDiagnosis        ()const;
     int         getDaysAdmitted     ()const;
     Treatment** getTreatments       ()const;
+    int         getDaysAdmitted     (Date dischargeDate)const;
 };

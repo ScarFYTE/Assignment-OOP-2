@@ -1,4 +1,5 @@
 #include "Patient.h"
+#include <chrono>
 
 Patient::Patient(string name, Date dob, int id,long long int phone, string diagnosis, Date admissionDate, bool critical, bool Operation) : Person(name, dob, id, phone), Diagnosis(diagnosis), Critical(critical), Operation(Operation), AdmissionDate(admissionDate) {
     Treatments = new Treatment*[100];
@@ -94,7 +95,7 @@ Patient::~Patient(){
         for (int i = 0; i < treatmentCount;i++){
             delete Treatments[i];
         }
-        delete Treatments;
+        delete[] Treatments;
     }
     Treatments = nullptr;
 }
@@ -102,7 +103,7 @@ Patient::~Patient(){
 
 //###############################################
 
-void Patient::addTreatment(Treatment& T){
+Treatment* Patient::addTreatment(Treatment& T){
     if(treatmentCount==treatmentCapacity){
         treatmentCapacity *= 2;
 
@@ -124,7 +125,7 @@ void Patient::addTreatment(Treatment& T){
     }
     //add new treatment
     Treatments[treatmentCount++] = new Treatment(T);
-    
+    return Treatments[treatmentCount-1];
 }   
 
 int Patient::TreatmentCount(){
@@ -151,7 +152,7 @@ void Patient::Display() const {
     cout << "ID: " << ID << endl;
     cout << "Phone: " << Phone << endl;
     cout << "Diagnosis: " << Diagnosis << endl;
-    cout << "Admission Date: " << getDOB() << endl;
+    cout << "Admission Date: " << AdmissionDate.toString() << endl;
     cout << "Ward: " << Ward << endl;
     cout << "Critical Condition: " << (Critical ? "Yes" : "No") << endl;
     cout << "Underwent Operation: " << (Operation ? "Yes" : "No") << endl;
@@ -174,9 +175,8 @@ string Patient::getWardName() const {
     return Ward;
 }
 
-void Patient::SetWardName() {
-    cout << "Enter new ward name: ";
-    cin >> Ward;
+void Patient::SetWardName(string wardName) {
+    Ward = wardName;
 }
 
 string Patient::getDiagnosis() const {
@@ -186,5 +186,15 @@ string Patient::getDiagnosis() const {
 Treatment** Patient::getTreatments() const {
     return Treatments;
 }
-
-
+int Patient::getDaysAdmitted() const {
+    Date currentDate; 
+    // Get current date using chrono
+    auto now = chrono::system_clock::now();
+    time_t now_c = chrono::system_clock::to_time_t(now);
+    tm* parts = localtime(&now_c);
+    currentDate.day = parts->tm_mday;
+    currentDate.month = parts->tm_mon + 1; // tm_mon is 0
+    currentDate.year = parts->tm_year + 1900; // tm_year is years since 1900
+    
+    return getDaysAdmitted(currentDate);
+}
