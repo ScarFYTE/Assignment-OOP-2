@@ -33,15 +33,16 @@ public:
 
     ~Patient();
 
-    void    addTreatment        (Treatment &T);
-    int     TreatmentCount      ();
-    double  TotalTreatmentCost  ();
-    Bill    GenerateBill        (double DailyRate ,int days);
-    void    Display             ()const override;
-    bool    isCritical          ()const;
-    bool    HasOpertaion        ()const;
-    string  getWardName         ()const;
-    void    SetWardName         ();
-    string  getDiagnosis        ()const;
-    int     getDaysAdmitted     ()const;
+    void        addTreatment        (Treatment &T);
+    int         TreatmentCount      ();
+    double      TotalTreatmentCost  ();
+    Bill        GenerateBill        (double DailyRate ,int days);
+    void        Display             ()const override;
+    bool        isCritical          ()const;
+    bool        HasOpertaion        ()const;
+    string      getWardName         ()const;
+    void        SetWardName         ();
+    string      getDiagnosis        ()const;
+    int         getDaysAdmitted     ()const;
+    Treatment** getTreatments       ()const;
 };

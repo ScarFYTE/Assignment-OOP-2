@@ -4,7 +4,11 @@
 #include <string>
 #include <vector>
 #include "Person.h"
-#include "Patient.h"
+
+class Patient;
+class Treatment;
+// ----------------------------
+
 using namespace std;
 
 

@@ -1,16 +1,17 @@
 #pragma once
 #include <string>
+#include "HospitalStaff.h"
 using namespace std;
 
 
 struct Treatment{
     string name;
     double cost;
-    string Perfomedby;
+    Employee* Perfomedby;
 
     public :
-    Treatment(string name, double cost, string performedBy);
+    Treatment(string name, double cost, Employee* performedBy);
     string getName() const;
     double getCost() const;
-    string getPerformedBy() const;
+    Employee* getPerformedBy() const;
 };

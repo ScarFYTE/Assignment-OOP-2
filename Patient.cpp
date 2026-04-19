@@ -183,5 +183,8 @@ string Patient::getDiagnosis() const {
     return Diagnosis;
 }
 
+Treatment** Patient::getTreatments() const {
+    return Treatments;
+}
 
 

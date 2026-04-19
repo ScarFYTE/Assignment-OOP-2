@@ -113,3 +113,66 @@ void Hospital::discharge(int patientID) {
     }
     cout << "Patient with ID " << patientID << " not found for discharge." << endl;
 }
+
+Patient** Hospital::filterPatients(bool (*predicate)(const Patient&), int& outCount) const {
+    Patient** result = new Patient*[liveCount];
+    outCount = 0;
+    for (int i = 0; i < liveCount; ++i) {
+        if (predicate(*livePatients[i])) {
+            result[outCount++] = livePatients[i];
+        }
+    }
+    return result;
+}
+
+Patient** Hospital::sortPatients(bool (*comparator)(const Patient&, const Patient&), int& outCount) const {
+    Patient** result = new Patient*[liveCount];
+    for (int i = 0; i < liveCount; ++i) {
+        result[i] = livePatients[i];
+    }
+    outCount = liveCount;
+    // Simple bubble sort for demonstration (not efficient for large datasets)
+    for (int i = 0; i < outCount - 1; ++i) {
+        for (int j = 0; j < outCount - i - 1; ++j) {
+            if (comparator(*result[j + 1], *result[j])) {
+                swap(result[j], result[j + 1]);
+            }
+        }
+    }
+    return result;
+}
+
+Employee** Hospital::filterStaff(bool (*predicate)(const Employee&), int& outCount) const {
+    Employee** result = new Employee*[staffCount];
+    outCount = 0;
+    for (int i = 0; i < staffCount; ++i) {
+        if (predicate(*staff[i])) {
+            result[outCount++] = staff[i];
+        }
+    }
+    return result;
+}
+
+double Hospital::wardRevenue(string wardName) const {
+    double totalRevenue = 0.0;
+    for (int i = 0; i < archiveCount; ++i) {
+        if (archivedPatients[i] != nullptr && archivedPatients[i]->getWardName() == wardName) {
+            totalRevenue += archivedBills[i]->total();
+        }
+    }
+    return totalRevenue;
+}
+
+Patient** Hospital::treatedBy(int staffID, int& outCount) const {
+    Patient** result = new Patient*[liveCount];
+    outCount = 0;
+    for (int i = 0; i < liveCount; ++i) {
+        for (int j = 0; j < livePatients[i]->TreatmentCount(); ++j) {
+            if (livePatients[i]->getTreatments()[j]->getPerformedBy()->getID() == staffID) {
+                result[outCount++] = livePatients[i];
+                break; // Move to next patient after first match
+            }
+        }
+    }
+    return result;
+}   
